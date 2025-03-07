@@ -1,0 +1,336 @@
+---
+title: 'Maths coursework'
+author: "binara"
+date: "2024-04-07"
+output:
+  word_document: default
+  html_document: default
+---
+```{r}
+library(tidyverse)
+```
+#question 1
+#a
+```{r}
+red_balls<-rep(5,5)
+green_balls <-rep(10,3)
+bag<-c(red_balls,green_balls)
+bag_size=length(bag)
+
+blue_balls<-rep(15,2)
+yellow_balls<-rep(20,4)
+bag2<-c(blue_balls,yellow_balls)
+bag2_size=length(bag2)
+
+
+
+output <- expand.grid(bag, bag2)
+
+
+output$sum <- output$Var1 + output$Var2
+
+
+values <- unique(output$sum)
+
+# Print the possible values
+values
+
+#In the first bag we have 5 red balls label with 5 and 3 green balls labelled with 10 and the next bags has 2 blue balls labelled with with 15 and 4 yellow balls with labelled 20.If we draw a red ball  from the first bag and a blue ball from the second bag, the sum is 5 + 15 = 20,If we draw a red ball from the first bag and a yellow ball from the second bag, the sum is 5 + 20 = 25,If we draw a green ball from the first bag and a blue ball from the second bag, the sum is 10 + 15 = 25, If we draw a green from the first bag and a yellow ball  from the second bag, the sum is 10 + 20 = 30, these outputs are the values for X.
+
+```
+##b)
+```{r}
+# Get the unique values of the sum and their counts
+count <- table(output$sum)
+
+# Calculate the probabilities
+total_outcomes <- sum(count)
+
+pmf <-count / total_outcomes
+
+# Print the probability mass function
+pmf
+```
+##c)
+```{r}
+# Calculate the expected value (mean) of X
+E_X <- sum(values * pmf)  # Multiply each possible value by its probability
+
+# Calculate the variance of X
+Var_X <- sum((values - E_X)^2 * pmf)  # Square the deviation from the mean
+
+# Print the results
+cat("Expected value E(X) =", E_X, "\n")
+cat("Variance Var(X) =", Var_X, "\n")
+```
+##d)
+```{r}
+
+output$Y <- 2*output$sum-3
+
+count <- table(output$Y)
+
+# Calculate the probabilities
+total_outcomes <- sum(count)
+pmf_Y <- count / total_outcomes
+
+# Print the probability mass function of Y
+print(pmf_Y)
+
+```
+##e)
+```{r}
+# Calculate the cdf of Y
+cdf_Y <- cumsum(pmf_Y)
+
+# Create a data frame with possible values of Y and corresponding cdf
+cdf_table_Y <- data.frame(y = names(pmf_Y), cdf = cdf_Y)
+
+# Print the cdf of Y
+print(cdf_table_Y)
+```
+##f)
+```{r}
+y_values<-c(37,47,57)
+y_cdf <- c(0.2083333, 0.7500000, 1.0000000)
+
+
+index<-which(y_values==37)
+
+pmf_y<-y_cdf[index]
+
+pmf_y
+
+```
+```{r}
+#question 2
+
+#a)
+# Set mean and standard deviation
+mean <- 36
+sd <- 8
+
+# Generate random sample of size 500
+sample <- rnorm(n = 500, mean = mean, sd = sd)
+
+# Calculate bin ranges (assuming you'll find min and max values in the sample)
+min_val <- min(sample)
+max_val <- max(sample)
+bin_width <- (max_val - min_val) / 10
+bins <- seq(from = min_val, to = max_val + bin_width, by = bin_width)
+
+# Create histogram
+hist(sample, breaks = bins, col = "lightblue", main = "Histogram of Random Sample", xlab = "Sample Value", ylab = "Frequency", freq =F )
+#b)
+# Overlay density curve
+x <- seq(from = min_val, to = max_val, length.out = 100)  # 100 points for smooth curve
+density <- dnorm(x, mean = mean, sd = sd)
+lines(x, density, col = "red", lwd = 2, lty = 2, legend = "Density Curve")
+legend("topright", c("Histogram", "Density Curve"), fill =c("lightblue", "red"))
+
+```
+
+```{r}
+#c)
+# histogram creates a bell curve centered around the mean 36. that means many points fall near to the mean value.
+ # desity curve which represents the probability density function(PDF) also creates a bell curve, since the histogram is bell shaped density curve should have to be bell shaped. Peek of the curve represents the mean value.
+
+```
+#question 3
+#a
+```{r}
+
+X<- c(2,2.5,3,3.5,4,4.5,5,5.5,6)
+Y<- c(6,7.25,8,9.0625,10,11.0625,12.25,13.5625,15)
+df <- as.data.frame(cbind(X,Y))
+
+plot(df$X, df$Y, main = "Data Plot (Y vs. X)", xlab = "X", ylab = "Y")
+
+```
+#b
+```{r}
+# Calculate Pearson's correlation coefficient
+correlation<- cor(X, Y)
+cat("Pearson's coefficient for the data set:",correlation,"\n")
+```
+#c
+```{r}
+# The value got for the pearson's correlation coefficient is 0.9970374, as this value is very close to +1 this has a positive linear correlation. It suggest a strong relation between X and Y 
+```
+#d
+```{r}
+
+last_sixX <- X[4:9]
+last_sixY <- Y[4:9]
+
+cor2 <- cor(last_sixX,last_sixY)
+cat("Pearson's coefficient for the last six values of the data set:",cor2,"\n")
+# The last six data points have slightly more consistent linear trend. because the coefficent value as increase by very small amount.
+```
+#e
+```{r}
+X1<- 2*X-1
+X2<-X^2
+
+cor_of_X1y<- cor(X1,Y)
+cor_of_X2y<- cor(X2,Y)
+cor_of_X1y       #when X1=2X-1  r(X1,y)
+cor_of_X2y       #when X2=X^2 r(X2,y)
+
+#r(x,y) and r(x1,y) are similar because x to x1 is a linear transformation.
+
+#r(x,y) and r(x2,y) are not similar because it is bot a linear transformation, squaring x can tends to positive correlation or negative correlation since the pearson's correlation coefficent decrease, negative correlation has occured.  
+
+```
+#question 4
+#a
+```{r}
+
+# Load the mtcars dataset
+data(mtcars)
+
+# first ten rows of the data  set
+head(mtcars, 10)
+```
+#b
+```{r}
+summary(mtcars$mpg)
+summary(mtcars$hp)
+```
+#c,#d
+```{r}
+
+plot(mtcars$mpg ~ mtcars$hp, main = "Scatter Plot of mpg vs hp", xlab = "Horsepower (hp)", ylab = "Miles per Gallon (mpg)")
+
+
+model <- lm(mpg ~ hp, data = mtcars)
+summary(model)  # Print model summary
+
+# Fitted values
+fitted_values <- predict(model)
+
+#reggersion line 
+abline(model, col = "red")  # Red line represents the fitted model
+```
+#e
+```{r}
+intercept<- coef(model)[1]
+gradient<-coef(model)[2]
+#Fitted equation
+cat("Fitted equation: y =", round(intercept, 2), "+", round(gradient, 2), "x\n")# Extract coefficients
+
+cat("for every one unit increase in horse power, mpg is expected to decrease by",gradient,"\n")# it decrease because of the negative gradient
+
+```
+#f
+```{r}
+plot(mtcars$hp, residuals(model), main = "Residual Plot", xlab = "Horsepower (hp)", ylab = "Residuals")
+abline(h = 0, col = "blue")
+
+# Ideally, residuals should be randomly scattered around the horizontal line (no pattern). This plot suggests no major deviations from the linear model assumption. However, a more thorough analysis might be needed for confirmation.
+```
+#g
+```{r}
+
+new_hp <- 110
+predicted_mpg <- predict(model, newdata = data.frame(hp = new_hp))
+cat("\nPredicted mpg for hp =", predicted_mpg)
+
+```
+#question 5 part A
+#a
+
+```{r}
+
+# Define the mean and standard deviation
+mean <- 5.50
+sd <- 1.20
+
+#90th percentile
+p90 <- qnorm(0.90, mean = mean, sd = sd)
+cat("The 90th percentile of customer spending is:", p90, "\n")
+```
+#b
+```{r}
+
+#25th percentile 
+p25 <- qnorm(0.25, mean = mean, sd = sd)
+cat("The 25th percentile of customer spending is:", p25, "\n")
+```
+#c
+```{r}
+
+# median value/ 50th percentile 
+median <- qnorm(0.50, mean = mean, sd = sd)
+cat("The median value of customer spending is:", median, "\n")
+```
+#d
+```{r}
+
+percentage_above_7 <- (1 - pnorm(7, mean = mean, sd = sd)) * 100
+cat("The percentage of customers who spend more than $7.00 is:", percentage_above_7, "%\n")
+
+```
+#question 5 part B
+#a
+```{r}
+
+# Parameters for the binomial distribution[^1^][1]
+n <- 50  # size
+p <- 0.05  # infection rate
+
+
+# The binomial distribution is suitable here
+```
+#b
+```{r}
+
+
+probaForfewer3 <- pbinom(2, size=n, prob=p)
+cat("Probability that fewer than 3 individuals are infected in the first scenario:", probaForfewer3, "\n")
+```
+#c
+```{r}
+
+mean <- n * p
+variance<- n * p * (1 - p)
+cat("Mean of X in the first scenario:", mean, "\n")
+cat("Variance of X in the first scenario:", variance, "\n")
+```
+#d
+```{r}
+
+# Still the experment is doing for infected or not and for large sample size therefore still binomial distribution is okay.
+n_new <- 200  # new size
+p_new <- 0.02  # new infection rate
+
+```
+#question 6
+```{r}
+
+
+# Define the dataset
+exam_scores <- c(82, 88, 75, 94, 90, 85, 78, 91, 86, 89, 92, 80, 87, 79, 84, 77, 83, 81, 76, 93, 88, 85, 89, 90, 82, 86, 75, 91, 79, 84, 78, 95, 88, 87, 93, 86, 82, 89, 90, 80)
+
+
+set.seed(123)
+
+
+calc_mean <- function(data, indices) {
+  mean(data[indices])
+}
+
+
+bootstrapped_means <- replicate(20000, calc_mean(exam_scores, sample(length(exam_scores), replace = TRUE)))
+
+
+lower_ci <- quantile(bootstrapped_means, 0.1 / 2)
+upper_ci <- quantile(bootstrapped_means, 1 - 0.1 / 2)
+
+
+cat("90% Bootstrap Percentile Confidence Interval for the Mean:", lower_ci,upper_ci,"\n")
+
+qqnorm(bootstrapped_means, main = "Normal Q-Q Plot of Bootstrap Means")
+qqline(bootstrapped_means, col = "red") 
+
+```
